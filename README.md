@@ -2,11 +2,15 @@
 
 Ansible role to configure Netbox as a docker-compose project.
 
+This repository started as a fork of wastrachan/ansible-role-netbox-docker. 
+
+Due to substantial changes and enhancements introduced over time, this fork has significantly diverged from the upstream project. While we acknowledge the original work as our foundation, users should be aware that the functionality, structure, license and features of this fork may differ considerably from the original repository. We recommend reviewing the commit history and documentation within this fork to understand the current state and capabilities of this Ansible role.
+
 ## Installation
 
 Install this role with Ansible Galaxy:
 
-`ansible-galaxy install git+https://github.com/wastrachan/ansible-role-netbox-docker.git`
+`ansible-galaxy install git+https://github.com/jsenecal/ansible-role-netbox-docker.git`
 
 ## Local Installation
 
@@ -15,7 +19,7 @@ If you'd like to include this role directly in a playbook, set your [`roles_path
 Then, add this role to your playbook's `requirements.yml`:
 
 ```
-- src: https://github.com/wastrachan/ansible-role-netbox-docker
+- src: https://github.com/jsenecal/ansible-role-netbox-docker
   version: master
   name: netbox-docker
 ```
@@ -152,4 +156,4 @@ netbox_container_env:
 
 ## License
 
-This project itself is licensed under the terms of the [MIT License](LICENSE). View [license information](https://github.com/netbox-community/netbox/blob/develop/LICENSE.txt) for software contained within.
+This project itself is licensed under the terms of the [MIT License](LICENSE.txt).
