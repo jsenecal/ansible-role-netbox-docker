@@ -1,0 +1,10 @@
+netbox_container_root: /opt/netbox
+
+netbox_mandatory_volumes: 
+  - netbox-reports
+  - netbox-scripts
+  - netbox-media-files
+
+netbox_scripts_volume_path: /etc/netbox/scripts
+netbox_reports_volume_path: /etc/netbox/reports
+netbox_media_volume_path: "{{netbox_container_root}}/netbox/media"
