@@ -3,5 +3,10 @@
   hosts: localhost
   become: true
   become_method: ansible.builtin.sudo
+  vars:
+    - netbox_port: null
+    - netbox_ssl_cert_bundle: /etc/ssl/private/localhost+2.pem
+    - netbox_ssl_cert_key: /etc/ssl/private/localhost+2-key.pem
+    - netbox_use_caddy: true  
   roles:
-    - .
+    - ../ansible-role-netbox-docker
