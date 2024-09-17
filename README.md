@@ -107,7 +107,7 @@ Configuration and installation options are made available as variables. Some of 
 | `netbox_caddy_https_port`         | `443`                     | Caddy HTTPS port                                    |
 | `netbox_ssl_cert_bundle`          | -                         | Caddy certificate bundle                            |
 | `netbox_ssl_cert_key`             | -                         | Caddy certificate key                               |
-| `netbox_extra_config`             | -                         | If provided, this string will be rendered in [`config/extra.py`](https://github.com/netbox-community/netbox-docker/blob/release/configuration/extra.py) |
+| `netbox_extra_config`             | -                         | If provided, this yaml will be rendered in [`config/extra.py`](https://github.com/netbox-community/netbox-docker/blob/release/configuration/extra.py) |
 | `netbox_extra_services`           | -                         | Additional services to include in the docker-compose file |
 | `netbox_extra_volumes`            | -                         | Additional volumes to include in the docker-compose file |
 

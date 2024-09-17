@@ -1,10 +1,19 @@
-- name: Ensure netbox directories exist
+---
+- name: Create the volumes folders on the host
+  file:
+    path: "{{item.source}}"
+    state: directory
+  loop: "{{netbox_volumes}}"
+  when: item.source is defined and item.type == 'bind'
+
+- name: Ensure required netbox directories exist
   ansible.builtin.file:
     path: "{{ netbox_base_dir }}/{{ item }}"
     state: directory
     recurse: true
   loop:
     - env
+    - db
 
 - name: Generate environment files for netbox and related containers
   ansible.builtin.template:

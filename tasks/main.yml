@@ -1,9 +1,10 @@
 ---
+- include_tasks: validate.yml
 - include_tasks: setup.yml
 
 
 - name: Ensure netbox compose project is running
   community.docker.docker_compose_v2:
     project_src: "{{ netbox_base_dir }}"
-    state: started
+    state: present
   register: netbox_docker_compose_result

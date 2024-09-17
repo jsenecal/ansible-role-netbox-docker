@@ -1,0 +1,16 @@
+- name: Verify mandatory netbox_volumes are present
+  assert:
+    that: "item in (netbox_volumes | map(attribute='target') | list)"
+    fail_msg: "Mandatory volume '{{ item }}' is missing from netbox_volumes"
+  loop: "{{ netbox_mandatory_volumes }}"
+
+- name: Validate the contents of the netbox_volumes variable
+  assert:
+    that:
+      - item.type is defined
+      - item.source is defined and item.type != 'tmpfs'
+      - item.target is defined
+    quiet: yes
+  loop: "{{netbox_volumes}}"
+  loop_control:
+    label: "{{ item.source | default(item.target | default(item.name | default(item))) }}"

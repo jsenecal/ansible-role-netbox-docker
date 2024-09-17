@@ -11,20 +11,13 @@ services:
     depends_on:
       netbox:
         condition: service_healthy
+
     volumes:
-    - type: bind
-      source: /etc/timezone
-      target: /etc/timezone
-      read_only: true
-    - type: bind
-      source: /etc/localtime
-      target: /etc/localtime
-      read_only: true
     - type: bind
       source: ./Caddyfile
       target: "/etc/caddy/Caddyfile"
       read_only: true
-{% if netbox_ssl_cert_bundle %}
+    {% if netbox_ssl_cert_bundle %}
     - type: bind
       source: "{{netbox_ssl_cert_bundle}}"
       target: "/etc/ssl/private/cert.crt"
@@ -33,7 +26,7 @@ services:
       source: "{{netbox_ssl_cert_key}}"
       target: "/etc/ssl/private/key.key"
       read_only: true
-{% endif %}
+    {% endif %}
     - type: volume
       source: netbox-caddy-data
       target: /data
@@ -43,9 +36,20 @@ services:
     ports:
     - "{{netbox_caddy_http_port}}:80" # Allows for http redirection
     - "{{netbox_caddy_https_port}}:443"
+    logging:
+      driver: "local"
+      options:
+        max-size: "10M"
+        max-file: "10"
 {% endif %}
   netbox: &netbox
-    image: {{ netbox_netbox_image }}
+    {% if netbox_custom_requirements or netbox_plugins %}
+    build:
+      context: .
+    image: {{netbox_netbox_image}}-plugins
+    {% else %}
+    image: {{netbox_netbox_image}}
+    {% endif %}
     depends_on:
       - postgres
       - valkey
@@ -58,14 +62,12 @@ services:
       timeout: 3s
       interval: 15s
     volumes:
+      {{ netbox_volumes | to_nice_yaml(indent=2) | indent(6, false) }}
       - ./nginx-unit.json:/etc/unit/nginx-unit.json:ro
-      - ./reports:/etc/netbox/reports:z,ro
-      - ./scripts:/etc/netbox/scripts:z,ro
       - ./extra.py:/etc/netbox/config/extra.py:ro
-      - netbox-media-files:/opt/netbox/netbox/media:z
     security_opt:
       - seccomp:unconfined
-    {% if netbox_port %}
+    {% if netbox_port and not netbox_use_caddy %}
     ports:
       - "{{ netbox_port }}:8080"
     {% else %}
@@ -81,6 +83,27 @@ services:
       - default
     {% if netbox_additional_network_names %}
       {% for network in netbox_additional_network_names %}- {{ network }}{% endfor %}
+    {% endif %}
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 30s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    logging:
+      driver: "local"
+      options:
+        max-size: "10M"
+        max-file: "10"
+    {% if netbox_secrets | length > 0 %}
+    secrets:
+    {% for secret in netbox_secrets %}
+      - {{secret.name}}
+    {% endfor %}
     {% endif %}
 
   netbox-worker: &netbox-worker
@@ -105,6 +128,16 @@ services:
     networks:
       - default
     restart: unless-stopped
+    deploy:
+      replicas: {{ netbox_workers }}
+      update_config:
+        parallelism: 1
+        delay: 30s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
   netbox-housekeeping:
     <<: *netbox-worker
@@ -115,6 +148,8 @@ services:
       start_period: 20s
       timeout: 3s
       interval: 15s
+    deploy:
+      replicas: 1
 
   postgres:
     image: {{ netbox_postgres_image }}
@@ -130,6 +165,12 @@ services:
       timeout: 30s
       interval: 10s
       retries: 5
+    logging:
+      driver: "local"
+      options:
+        max-size: "10M"
+        max-file: "10"
+  
 
   valkey:
     image: {{ netbox_valkey_image }}
@@ -149,6 +190,11 @@ services:
       timeout: 3s
       interval: 1s
       retries: 5
+    logging:
+      driver: "local"
+      options:
+        max-size: "10M"
+        max-file: "10"
 
   valkey-cache:
     image: {{ netbox_valkey_image }}
@@ -157,10 +203,17 @@ services:
       - -c # this is to evaluate the $VALKEY_PASSWORD from the env
       - valkey-server --requirepass $$VALKEY_PASSWORD ## $$ because of docker-compose
     env_file: env/valkey-cache.env
+    volumes:
+    - netbox-valkey-cache-data:/data    
     networks:
       - default
     restart: unless-stopped
     healthcheck: *valkey-healthcheck
+    logging:
+      driver: "local"
+      options:
+        max-size: "10M"
+        max-file: "10"
 
 volumes:
   netbox-media-files:
@@ -168,6 +221,8 @@ volumes:
   netbox-postgres-data:
     driver: local
   netbox-valkey-data:
+    driver: local
+  netbox-valkey-cache-data:
     driver: local
 {% if netbox_use_caddy %}
   netbox-caddy-data:
@@ -180,5 +235,13 @@ networks:
   {{ network }}:
     name: {{ network }}
     external: true
+{% endfor %}
+{% endif %}
+
+{% if netbox_secrets is defined and netbox_secrets | length > 0 %}
+secrets:
+{% for secret in netbox_secrets %}
+  {{secret.name}}:
+    file: {{secret.path}}
 {% endfor %}
 {% endif %}
