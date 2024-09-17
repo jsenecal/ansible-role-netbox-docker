@@ -3,3 +3,4 @@
   community.docker.docker_compose_v2:
     project_src: "{{ netbox_base_dir }}"
     state: restarted
+  when: not netbox_docker_compose_result is changed

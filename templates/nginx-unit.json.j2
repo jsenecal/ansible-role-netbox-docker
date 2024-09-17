@@ -20,7 +20,7 @@
             "uri": "/static/*"
           },
           "action": {
-            "share": "/opt/netbox/netbox${uri}"
+            "share": "{{netbox_container_root}}/netbox${uri}"
           }
         },
         {
@@ -43,9 +43,9 @@
     "applications": {
       "netbox": {
         "type": "python 3",
-        "path": "/opt/netbox/netbox/",
+        "path": "{{netbox_container_root}}/netbox/",
         "module": "netbox.wsgi",
-        "home": "/opt/netbox/venv",
+        "home": "{{netbox_container_root}}/venv",
         "processes": 4
       }
     },

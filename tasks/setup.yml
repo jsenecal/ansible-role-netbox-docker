@@ -1,0 +1,31 @@
+- name: Ensure netbox directories exist
+  ansible.builtin.file:
+    path: "{{ netbox_base_dir }}/{{ item }}"
+    state: directory
+    recurse: true
+  loop:
+    - env
+
+- name: Generate environment files for netbox and related containers
+  ansible.builtin.template:
+    src: "env/{{ item }}.j2"
+    dest: "{{ netbox_base_dir }}/env/{{ item }}"
+    mode: "0644"
+  loop:
+    - netbox.env
+    - postgres.env
+    - valkey-cache.env
+    - valkey.env
+  notify: Restart netbox
+
+- name: Generate configuration files from templates
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ netbox_base_dir }}/{{ item }}"
+    mode: "0644"
+  loop:
+    - docker-compose.yml
+    - extra.py
+    - Caddyfile
+    - nginx-unit.json
+  notify: Restart netbox
