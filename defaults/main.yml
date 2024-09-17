@@ -1,31 +1,72 @@
 ---
+# defaults file for ansible-role-netbox
+
+# Root path for netbox's docker-compose file and data store
 netbox_base_dir: /opt/netbox
+
+# Host port to expose netbox on. If blank or null, netbox's port is not exposed
 netbox_port: 8080
 
+# Netbox and netbox-docker versions and tag
 netbox_netbox_docker_version: 3.0.1
 netbox_netbox_version: 4.1
-netbox_netbox_image: "docker.io/netboxcommunity/netbox:v{{ netbox_netbox_version }}-{{ netbox_netbox_docker_version }}"
+netbox_container_tag: v{{ netbox_netbox_version }}-{{ netbox_netbox_docker_version }}
+# Netbox docker image and tag
+netbox_netbox_image: "docker.io/netboxcommunity/netbox:{{ netbox_container_tag }}"
+
+# Netbox docker git repository
+netbox_docker_git_url: https://github.com/netbox-community/netbox-docker.git
+# Path to netbox-docker source repository on the host
+netbox_docker_path: "/usr/local/src/netbox-docker"
+# Build netbox-docker container from source
+netbox_docker_build: false
+
+# Valkey docker image and tag
 netbox_valkey_image: docker.io/valkey/valkey:8.0-alpine
+# Postgres docker image and tag
 netbox_postgres_image: docker.io/postgres:16-alpine
+# Caddy docker image and tag
 netbox_caddy_image: docker.io/caddy:2-alpine
 
+# If set, Caddy will be used to serve Netbox over TLS
 netbox_use_caddy: false
-netbox_caddy_letsencrypt_email: ""
+# Caddy HTTP port
 netbox_caddy_http_port: 80
+# Caddy HTTPS port
 netbox_caddy_https_port: 443
+
+# Email address to use for letsencrypt automatic certificate generation (mutually exclusive with netbox_ssl_cert_bundle/netbox_ssl_cert_key)
+netbox_caddy_letsencrypt_email: ""
+# Caddy certificate bundle
 netbox_ssl_cert_bundle: ""
+# Caddy certificate key
 netbox_ssl_cert_key: ""
 
+# API token for the default admin user, created on first run
 netbox_admin_api_token: ""
+# Email of the default admin user, created on first run
 netbox_admin_email: admin@example.com
+# Password for the default admin user, created on first run
 netbox_admin_password: admin
+# Username of the default admin user, created on first run
 netbox_admin_username: admin
+# If set, connections will be restricted to this list of host names (also used in caddy)
 netbox_allowed_hosts: "*"
+# Optional extra container environment variables to apply to the netbox container
 netbox_container_env: []
+# Optional extra container labels to apply to the netbox container
 netbox_container_labels: []
+# If set to true, all CORS origins will be allowed
 netbox_cors_origin_allow_all: true
+# Whitelist of acceptable CORS origin headers
 netbox_cors_origin_whitelist: http://localhost
+# Default number of objects for paginated views
 netbox_default_page_size: 250
+# Default time zone for the Netbox instance
+netbox_default_timezone: UTC
+
+# Email server settings 
+# Documentation: https://docs.djangoproject.com/en/3.1/ref/settings/
 netbox_email_certfile: ""
 netbox_email_from: netbox@bar.com
 netbox_email_keyfile: ""
@@ -36,30 +77,54 @@ netbox_email_timeout: 5
 netbox_email_use_ssl: false
 netbox_email_use_tls: false
 netbox_email_username: netbox
+
+# Enforcement of unique IP space within the global table
 netbox_enforce_global_unique: false
+# Enable GraphQL API
 netbox_graphql_enabled: true
+# Interval to run housekeeping worker
 netbox_housekeeping_interval: 86400
+# Whether or not a user must be authenticated to view DCIM details in Netbox
 netbox_login_required: false
+# Maximum number of objects for paginated API requests
 netbox_max_page_size: 1000
+# Expose Prometheus monitoring metrics at the HTTP endpoint '/metrics'
 netbox_metrics_enabled: false
+# Postgres database name
 netbox_pg_db: netbox
+# Postgres database host. This should not be changed if using the default docker-compose setup.
 netbox_pg_host: postgres
+# Postgres password
 netbox_pg_password: >
  "{{ lookup('ansible.builtin.password', '/tmp/netbox_pg_password.txt', chars=['ascii_letters'], length=16, seed=inventory_hostname+'.netbox_pg_password') }}"
+# Postgres user
 netbox_pg_user: netbox
+# Extra external networks to attach to the netbox container
 netbox_additional_network_names: ""
+# Valkey cache instance host. This should not be changed if using the default docker-compose setup.
 netbox_valkey_cache_host: valkey-cache
+# If true, certificates for valkey cache are not checked
 netbox_valkey_cache_insecure_skip_tls_verify: false
+# Valkey cache instance password
 netbox_valkey_cache_password: >
  "{{ lookup('ansible.builtin.password', '/tmp/netbox_valkey_cache_password.txt', chars=['ascii_letters'], length=16, seed=inventory_hostname+'.netbox_valkey_cache_password') }}"
+# If true, communication with valkey is secured with SSL
 netbox_valkey_cache_ssl: false
+# Valkey instance host. This should not be changed if using the default docker-compose setup.
 netbox_valkey_host: valkey
+# If true, certificates for valkey are not checked
 netbox_valkey_insecure_skip_tls_verify: false
+# Valkey instance password
 netbox_valkey_password: >
  "{{ lookup('ansible.builtin.password', '/tmp/netbox_valkey_password.txt', chars=['ascii_letters'], length=16, seed=inventory_hostname+'.netbox_valkey_password') }}"
+# Netbox secret key. Should be at least 50 characters long
 netbox_secret_key: >
  "{{ lookup('ansible.builtin.password', '/tmp/netbox_secret_key.txt', chars=['ascii_letters'], length=50, seed=inventory_hostname+'.netbox_secret_key') }}"
+# If true, do not run startup scripts on container start
 netbox_skip_startup_scripts: false
+# If true, do not create superuser on container start
 netbox_skip_superuser: false
+# If true, enable netbox webhooks functionality
 netbox_webhooks_enabled: true
+# If provided, this string will be rendered in `config/extra.py`
 netbox_extra_config: ""
