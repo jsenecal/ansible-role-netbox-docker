@@ -1,18 +1,33 @@
 # Netbox Docker
 
-Ansible role to configure Netbox as a docker-compose project.
+Ansible role to configure [NetBox](https://github.com/netbox-community/netbox) as a docker-compose project.
 
-This repository started as a fork of wastrachan/ansible-role-netbox-docker. 
+This repository started as a fork of [wastrachan/ansible-role-netbox-docker](https://github.com/wastrachan/ansible-role-netbox-docker) but due to substantial changes and enhancements introduced over time, this fork has somewhat diverged from the upstream project. While we acknowledge the original work as our foundation, users should be aware that the functionality, structure, license and features of this fork may differ considerably from the original repository. We recommend reviewing the commit history and documentation within this fork to understand the current state and capabilities of this Ansible role.
 
-Due to substantial changes and enhancements introduced over time, this fork has somewhat diverged from the upstream project. While we acknowledge the original work as our foundation, users should be aware that the functionality, structure, license and features of this fork may differ considerably from the original repository. We recommend reviewing the commit history and documentation within this fork to understand the current state and capabilities of this Ansible role.
+## Compatibility
+
+### Operating Systems
+
+This role is compatible with the following linux distributions:
+- Ubuntu
+- Debian
+- Red Hat Entreprise Linux (RHEL)
+- Fedora
+
+### Netbox
+
+This role is compatible with the following versions of Netbox-Docker and should follow the same compatibility matrix as the upstream project for the most part:
+- [3.0.1](https://github.com/netbox-community/netbox-docker/releases/tag/3.0.1) (NetBox v4.1.x and above. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
 
 ## Installation
+
+### Ansible Galaxy
 
 Install this role with Ansible Galaxy:
 
 `ansible-galaxy install git+https://github.com/jsenecal/ansible-role-netbox-docker.git`
 
-## Local Installation
+### Local Installation
 
 If you'd like to include this role directly in a playbook, set your [`roles_path`](https://docs.ansible.com/ansible/latest/reference_appendices/galaxy.html#roles-path) to `./roles` via environment variable or `ansible.cfg`.
 
