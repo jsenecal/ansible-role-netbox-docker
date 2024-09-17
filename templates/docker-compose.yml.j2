@@ -171,6 +171,25 @@ services:
         max-size: "10M"
         max-file: "10"
   
+{% if netbox_pgbackups_enabled %}
+  pgbackups:
+    image: {{ netbox_pgbackups_image }}
+    restart: unless-stopped
+    env_file: "env/postgres.env"
+    volumes:
+      - type: bind
+        source: "{{netbox_base_path}}/backups"
+        target: "/backups"
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    logging:
+      driver: "local"
+      options:
+        max-size: "10M"
+        max-file: "10"
+{% endif %}
 
   valkey:
     image: {{ netbox_valkey_image }}

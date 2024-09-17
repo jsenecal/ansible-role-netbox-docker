@@ -14,6 +14,7 @@
   loop:
     - env
     - db
+    - backups
 
 - name: Generate environment files for netbox and related containers
   ansible.builtin.template:
@@ -25,6 +26,7 @@
     - postgres.env
     - valkey-cache.env
     - valkey.env
+    - pgbackups.env
   notify: Restart netbox
 
 - name: Generate configuration files from templates
