@@ -1,11 +1,10 @@
 ---
 galaxy_info:
   role_name: netbox_docker
-  namespace: netbox_docker
+  namespace: jsenecal
   author: Jonathan Senecal
-  company: ""
-  description: Netbox as a docker-compose project
-  license: license (MIT)
+  description: NetBox as a docker-compose project
+  license: MIT
   min_ansible_version: "2.9"
 
   platforms:
