@@ -1,9 +1,9 @@
 ---
 - name: Git checkout plugins with a source repository
   ansible.builtin.git:
-    repo: "{{item.src}}"
-    dest: "{{netbox_base_path}}/plugins/{{item.name}}"
-    version: "{{item.version|default('HEAD')}}"
-  loop: "{{netbox_plugins}}"
+    repo: "{{ item.src }}"
+    dest: "{{ netbox_base_path }}/plugins/{{ item.name }}"
+    version: "{{ item.version | default('HEAD') }}"
+  loop: "{{ netbox_plugins }}"
   when: item.src is defined
   register: netbox_plugins_result

@@ -1,3 +1,4 @@
+---
 - name: Configure systemctls for Netbox
   block:
     - name: Set net.core.somaxconn to a higher value than the default 128

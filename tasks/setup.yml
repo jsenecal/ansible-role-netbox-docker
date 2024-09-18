@@ -1,15 +1,17 @@
 ---
 - name: Create the volumes folders on the host
-  file:
-    path: "{{item.source}}"
+  ansible.builtin.file:
+    path: "{{ item.source }}"
     state: directory
-  loop: "{{netbox_volumes}}"
+    mode: "0755"
+  loop: "{{ netbox_volumes }}"
   when: item.source is defined and item.type == 'bind'
 
 - name: Copy the secret files
-  copy:
+  ansible.builtin.copy:
     content: "{{ item.content }}"
     dest: "{{ item.path }}"
+    mode: "0644"
   with_items: "{{ netbox_secrets }}"
 
 - name: Ensure required netbox directories exist
@@ -24,7 +26,7 @@
 
 - name: Generate environment files for netbox and related containers
   ansible.builtin.template:
-    src: "env/{{ item }}.j2"
+    src: env/{{ item }}.j2
     dest: "{{ netbox_base_path }}/env/{{ item }}"
     mode: "0644"
   loop:

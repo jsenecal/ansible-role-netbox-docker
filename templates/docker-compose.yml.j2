@@ -178,7 +178,7 @@ services:
     env_file: "env/postgres.env"
     volumes:
       - type: bind
-        source: "{{netbox_base_path}}/backups"
+        source: "{{ netbox_base_path }}/backups"
         target: "/backups"
     links:
       - postgres
