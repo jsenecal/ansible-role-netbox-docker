@@ -1,0 +1,19 @@
+FROM {{netbox_netbox_image}}
+
+{%- set plugins_from_pip = netbox_plugins | selectattr('src', 'undefined') |  list %}
+{%- if plugins_from_pip %}
+RUN /opt/netbox/venv/bin/pip install --upgrade pip \
+    {% for plugin in plugins_from_pip -%}
+    {{ plugin.name }}{% if 'version' in plugin %}=={{ plugin.version }}{% endif %}{{ ' \\' if not loop.last else '' }}
+    {% endfor %}
+{%- endif %}
+
+{%- set plugins_from_src = netbox_plugins | selectattr('src', 'defined') | map(attribute='name') | list %}
+{%- if plugins_from_src %}
+{%- for plugin in plugins_from_src %}
+COPY plugins/{{plugin}} /opt/{{plugin}}
+RUN /opt/netbox/venv/bin/pip install /opt/{{plugin}}/
+{% endfor %}
+{%- endif %}
+
+RUN SECRET_KEY="dummyKeyWithMinimumLengthMet-------------------------" /opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py collectstatic --no-input

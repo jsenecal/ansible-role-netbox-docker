@@ -43,10 +43,10 @@ services:
         max-file: "10"
 {% endif %}
   netbox: &netbox
-    {% if netbox_custom_requirements or netbox_plugins %}
+    {% if netbox_extra_packages or netbox_plugins %}
     build:
       context: .
-    image: {{netbox_netbox_image}}-plugins
+    image: {{netbox_netbox_image}}-custom
     {% else %}
     image: {{netbox_netbox_image}}
     {% endif %}

@@ -1,0 +1,16 @@
+---
+- name: Git clone netbox-docker
+  ansible.builtin.git:
+    repo: "https://github.com/netbox-community/netbox-docker.git"
+    dest: "{{netbox_base_path}}/netbox-docker"
+    single_branch: yes
+    version: "{{netbox_netbox_docker_version}}"
+
+- name: Build the netbox-docker image from source
+  ansible.builtin.shell: |
+    ./build.sh {{netbox_container_tag}} | while IFS= read -r line; do printf '%s %s\n' "$(date)" "$line"; done >> /tmp/netbox-docker-build.log
+  args:
+    chdir: "{{netbox_base_path}}/netbox-docker"
+    executable: /bin/bash
+  tags:
+    - docker-build

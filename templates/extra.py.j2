@@ -6,4 +6,37 @@
 ## directly through environment variables.
 ####
 
+import logging
+import sys
+import yaml
+
+from os import environ
+
+if environ.get('DEBUG', 'False').lower() == 'true':
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    root.addHandler(handler)
+
+ADMINS = [
+{% for admin in netbox_admins %}
+    ["{{admin.name}}", "{{admin.email}}"],
+{% endfor %}
+]
+
+# Enable installed plugins.
+PLUGINS = [{% for plugin in netbox_plugins %}"{{plugin.name}}", {% endfor %}]
+
+# Plugins configuration settings. These settings are used by various plugins that may have been installed.
+# Each key in the dictionary is the name of an installed plugin and its value is a dictionary of settings.
+# This is generated from a Jinja2 template, so we can use the `netbox_plugins_config` variable to render the plugins configuration as yaml
+# and then load it as a dictionary.
+plugins_config_yaml = """
+{{netbox_plugins_config|to_nice_yaml()}}"""
+PLUGINS_CONFIG = yaml.safe_load(plugins_config_yaml)
+
 {{ netbox_extra_config }}

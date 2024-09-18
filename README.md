@@ -107,11 +107,30 @@ Configuration and installation options are made available as variables. Some of 
 | `netbox_caddy_https_port`         | `443`                     | Caddy HTTPS port                                    |
 | `netbox_ssl_cert_bundle`          | -                         | Caddy certificate bundle                            |
 | `netbox_ssl_cert_key`             | -                         | Caddy certificate key                               |
-| `netbox_extra_config`             | -                         | If provided, this yaml will be rendered in [`config/extra.py`](https://github.com/netbox-community/netbox-docker/blob/release/configuration/extra.py) |
+| `netbox_extra_config`             | -                         | If provided, this string will be rendered __as is__ in [`config/extra.py`](https://github.com/netbox-community/netbox-docker/blob/release/configuration/extra.py) |
 | `netbox_extra_services`           | -                         | Additional services to include in the docker-compose file |
-| `netbox_extra_volumes`            | -                         | Additional volumes to include in the docker-compose file |
+| `netbox_extra_volumes`            | -                         | Additional volumes for the nebox container to include in the docker-compose file |
 
 Some additional variables are available for advanced configuration. Please refer to the [defaults/main.yml](defaults/main.yml) file for a complete list.
+
+### Plugins
+Some variables are available to configure plugins. These are not enabled by default. To enable a plugin, set the `netbox_plugins` variable to a list of plugins to install. Each plugin should be a dictionary with the following keys:
+- `name`: The name of the plugin to install, as it appears on PyPi, or the name of the directory in the case of a plugin installed from source
+- `src`: The source of the plugin. This can be a URL to a git repository or a local path. If not provided, the plugin will be installed from PyPi
+- `version`: When a `src` is defined, this defines a valid reference within the plugin's git repository to install or package version. If not provided, `HEAD` of the default repository branch will be installed or the latest pypi package version if `src` isnt defined.
+
+For example, to install the [netbox-acls](https://github.com/netbox-community/netbox-acls) plugin from source, you would add the following to your playbook:
+
+```yaml
+netbox_plugins:
+  - name: netbox-acls
+    src: https://github.com/netbox-community/netbox-acls.git
+    version: 1.6.1
+```
+
+#### Plugin Configuration
+
+`netbox_plugins_config` is a dictionary of plugin configurations. Each key should be the name of a plugin, and the value should be a dictionary of configuration options for that plugin. Please refer to the plugin's documentation for available configuration options.
 
 ## Example Playbook
 

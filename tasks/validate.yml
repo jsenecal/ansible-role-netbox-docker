@@ -14,3 +14,14 @@
   loop: "{{netbox_volumes}}"
   loop_control:
     label: "{{ item.source | default(item.target | default(item.name | default(item))) }}"
+
+- name: Validate the contents of the netbox_secrets variable
+  assert:
+    that:
+      - item.name is defined
+      - item.content is defined
+      - item.path is defined
+    quiet: yes
+  loop: "{{netbox_secrets}}"
+  loop_control:
+    label: "{{ item }}"

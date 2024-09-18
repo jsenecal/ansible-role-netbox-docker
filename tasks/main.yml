@@ -1,10 +1,18 @@
 ---
 - include_tasks: validate.yml
 - include_tasks: setup.yml
+- include_tasks: plugins.yml
+- include_tasks: build.yml
+  when: netbox_docker_build
 
+- name: Set build to true if plugins or extra packages are required 
+  set_fact:
+    netbox_force_dockerfile_build: "{{netbox_plugins or netbox_extra_packages}}"
+  when: not netbox_force_dockerfile_build 
 
 - name: Ensure netbox compose project is running
   community.docker.docker_compose_v2:
     project_src: "{{ netbox_base_path }}"
     state: present
+    build: "{% if netbox_force_dockerfile_build %}always{% else %}policy{% endif %}"
   register: netbox_docker_compose_result

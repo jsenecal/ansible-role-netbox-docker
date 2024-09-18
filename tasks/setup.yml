@@ -6,6 +6,12 @@
   loop: "{{netbox_volumes}}"
   when: item.source is defined and item.type == 'bind'
 
+- name: Copy the secret files
+  copy:
+    content: "{{ item.content }}"
+    dest: "{{ item.path }}"
+  with_items: "{{ netbox_secrets }}"
+
 - name: Ensure required netbox directories exist
   ansible.builtin.file:
     path: "{{ netbox_base_path }}/{{ item }}"
@@ -39,4 +45,5 @@
     - extra.py
     - Caddyfile
     - nginx-unit.json
+    - Dockerfile
   notify: Restart netbox
