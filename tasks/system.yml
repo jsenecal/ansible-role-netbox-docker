@@ -1,0 +1,13 @@
+- name: Configure systemctls for Netbox
+  block:
+    - name: Set net.core.somaxconn to a higher value than the default 128
+      ansible.posix.sysctl:
+        name: net.core.somaxconn
+        value: "2048"
+        state: present
+
+    - name: Set vm.overcommit_memory to 1
+      ansible.posix.sysctl:
+        name: vm.overcommit_memory
+        value: "1"
+        state: present

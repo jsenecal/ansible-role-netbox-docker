@@ -4,6 +4,7 @@
 - include_tasks: plugins.yml
 - include_tasks: build.yml
   when: netbox_docker_build
+- include_tasks: system.yml
 
 - name: Set build to true if plugins or extra packages are required 
   set_fact:
