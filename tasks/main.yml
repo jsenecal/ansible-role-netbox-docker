@@ -5,7 +5,9 @@
     - setup.yml
     - plugins.yml
     - system.yml
-  ansible.builtin.include_tasks: "{{ item }}"
+  loop_control:
+    loop_var: filename
+  ansible.builtin.include_tasks: "{{ filename }}"
 
 - name: Build the netbox docker image when required
   ansible.builtin.include_tasks: build.yml
