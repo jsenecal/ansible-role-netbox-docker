@@ -1,14 +1,12 @@
 FROM {{netbox_netbox_image}}
-
-{%- set plugins_from_pip = netbox_plugins | selectattr('src', 'undefined') |  list %}
+{% set plugins_from_pip = netbox_plugins | selectattr('src', 'undefined') |  list %}
 {%- if plugins_from_pip %}
 RUN /opt/netbox/venv/bin/pip install --upgrade pip \
     {% for plugin in plugins_from_pip -%}
     {{ plugin.name }}{% if 'version' in plugin %}=={{ plugin.version }}{% endif %}{{ ' \\' if not loop.last else '' }}
     {% endfor %}
 {%- endif %}
-
-{%- set plugins_from_src = netbox_plugins | selectattr('src', 'defined') | map(attribute='name') | list %}
+{% set plugins_from_src = netbox_plugins | selectattr('src', 'defined') | map(attribute='name') | list %}
 {%- if plugins_from_src %}
 {%- for plugin in plugins_from_src %}
 COPY plugins/{{plugin}} /opt/{{plugin}}
