@@ -5,6 +5,6 @@
 
 - name: Ensure netbox compose project is running
   community.docker.docker_compose_v2:
-    project_src: "{{ netbox_base_dir }}"
+    project_src: "{{ netbox_base_path }}"
     state: present
   register: netbox_docker_compose_result

@@ -8,7 +8,7 @@
 
 - name: Ensure required netbox directories exist
   ansible.builtin.file:
-    path: "{{ netbox_base_dir }}/{{ item }}"
+    path: "{{ netbox_base_path }}/{{ item }}"
     state: directory
     recurse: true
   loop:
@@ -19,7 +19,7 @@
 - name: Generate environment files for netbox and related containers
   ansible.builtin.template:
     src: "env/{{ item }}.j2"
-    dest: "{{ netbox_base_dir }}/env/{{ item }}"
+    dest: "{{ netbox_base_path }}/env/{{ item }}"
     mode: "0644"
   loop:
     - netbox.env
@@ -32,7 +32,7 @@
 - name: Generate configuration files from templates
   ansible.builtin.template:
     src: "{{ item }}.j2"
-    dest: "{{ netbox_base_dir }}/{{ item }}"
+    dest: "{{ netbox_base_path }}/{{ item }}"
     mode: "0644"
   loop:
     - docker-compose.yml

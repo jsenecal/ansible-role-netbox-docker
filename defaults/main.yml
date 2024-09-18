@@ -2,21 +2,21 @@
 # defaults file for ansible-role-netbox
 
 # Root path for netbox's docker-compose file and data store
-netbox_base_dir: /opt/netbox
+netbox_base_path: /opt/netbox
 
 
 # Volume mounts for netbox container
 netbox_volumes:
   - type: bind
-    source: "{{netbox_base_dir}}/reports"
+    source: "{{netbox_base_path}}/reports"
     target: "{{netbox_reports_volume_path}}"
     read_only: true
   - type: bind
-    source: "{{netbox_base_dir}}/scripts"
+    source: "{{netbox_base_path}}/scripts"
     target: "{{netbox_scripts_volume_path}}"
     read_only: true
   - type: bind
-    source: "{{netbox_base_dir}}/media"
+    source: "{{netbox_base_path}}/media"
     target: "{{netbox_media_volume_path}}"
 
 # Secret files to mount into the netbox container
@@ -131,7 +131,7 @@ netbox_pgbackups_keep_days: 7
 netbox_pgbackups_keep_weeks: 4
 netbox_pgbackups_keep_months: 12
 # pgBackups storage path
-netbox_pgbackups_storage_path: "{{netbox_base_dir}}/backups"
+netbox_pgbackups_storage_path: "{{netbox_base_path}}/backups"
 
 
 # Extra external networks to attach to the netbox container
