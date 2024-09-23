@@ -11,7 +11,7 @@ netbox_force_dockerfile_build: false # Force a rebuild of the netbox container
 # Version and Image Configuration
 # Netbox and netbox-docker versions and tag
 netbox_netbox_version: 4.1
-netbox_netbox_docker_version: 3.0.1
+netbox_netbox_docker_version: 3.0.2
 netbox_container_tag: v{{ netbox_netbox_version }}-{{ netbox_netbox_docker_version }}
 # Netbox docker image and tag
 netbox_netbox_image: docker.io/netboxcommunity/netbox:{{ netbox_container_tag }}
