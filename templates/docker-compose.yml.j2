@@ -175,7 +175,7 @@ services:
   pgbackups:
     image: {{ netbox_pgbackups_image }}
     restart: unless-stopped
-    env_file: "env/postgres.env"
+    env_file: "env/pgbackups.env"
     volumes:
       - type: bind
         source: "{{ netbox_base_path }}/backups"
