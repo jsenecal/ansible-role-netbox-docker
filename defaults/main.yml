@@ -154,3 +154,6 @@ netbox_extra_packages: [] # If provided, these python packages will be installed
 netbox_plugins: []
 # Configuration for netbox plugins, each key should be the name of a plugin, and the value should be a dictionary of configuration options for that plugin
 netbox_plugins_config: {}
+
+# Resources limits
+netbox_resources_limits: {}
