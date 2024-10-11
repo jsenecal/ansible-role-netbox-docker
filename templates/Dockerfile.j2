@@ -13,5 +13,7 @@ COPY plugins/{{plugin}} /opt/{{plugin}}
 RUN /opt/netbox/venv/bin/pip install /opt/{{plugin}}/
 {% endfor %}
 {%- endif %}
-
+{%- if netbox_extra_packages %}
+RUN /opt/netbox/venv/bin/pip install {{ netbox_extra_packages|join(' ') }}
+{% endif %} 
 RUN SECRET_KEY="dummyKeyWithMinimumLengthMet-------------------------" /opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py collectstatic --no-input
