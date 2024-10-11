@@ -43,6 +43,9 @@ netbox_volumes:
   - type: bind
     source: "{{ netbox_base_path }}/media"
     target: "{{ netbox_media_volume_path }}"
+  - type: bind
+    source: "{{ netbox_base_path }}/static"
+    target: "{{ netbox_static_volume_path }}"
 
 # Secret files to mount into the netbox container
 # Format: {name:, path:}

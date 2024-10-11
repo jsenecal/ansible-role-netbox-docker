@@ -9,4 +9,6 @@ netbox_mandatory_volumes:
 netbox_scripts_volume_path: /etc/netbox/scripts
 netbox_reports_volume_path: /etc/netbox/reports
 netbox_media_volume_path: "{{ netbox_container_root }}/netbox/media"
+netbox_static_volume_path: "{{ netbox_container_root }}/netbox/static"
+
 netbox_user_id: 999 # UID of the nginx-unit proccess in the container, usually 999 since it's the default for nginx unit
