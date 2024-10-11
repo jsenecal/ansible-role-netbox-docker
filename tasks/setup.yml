@@ -4,6 +4,7 @@
     path: "{{ item.source }}"
     state: directory
     mode: "0755"
+    owner: "{{ netbox_user_id }}"
   loop: "{{ netbox_volumes }}"
   when: item.source is defined and item.type == 'bind'
 
