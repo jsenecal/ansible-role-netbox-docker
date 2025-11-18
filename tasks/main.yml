@@ -24,3 +24,5 @@
     state: present
     build: "{% if netbox_force_dockerfile_build %}always{% else %}policy{% endif %}"
   register: netbox_docker_compose_result
+  async: 600 # timeout in seconds (10 minutes)
+  poll: 10 # check status every 10 seconds
