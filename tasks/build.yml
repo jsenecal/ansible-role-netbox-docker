@@ -9,11 +9,12 @@
 - name: Build the netbox-docker image from source
   ansible.builtin.shell: |
     set -euxo pipefail; \
-    ./build.sh {{ netbox_container_tag }} | while IFS= read -r line; do printf '%s %s\n' "$(date)" "$line"; done >> /tmp/netbox-docker-build.log
+    export SRC_ORG={{ netbox_netbox_src_org }}; \
+    export SRC_REPO={{ netbox_netbox_src_repo }}; \
+    ./build.sh {{ netbox_netbox_src_branch }} 2>&1 | while IFS= read -r line; do printf '%s %s\n' "$(date)" "$line"; done >> /tmp/netbox-docker-build.log
   args:
     chdir: "{{ netbox_base_path }}/netbox-docker"
     executable: /bin/bash
-
   tags:
     - docker-build
   changed_when: true
