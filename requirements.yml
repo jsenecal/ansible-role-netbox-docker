@@ -1,8 +1,8 @@
 ---
 collections:
   - name: community.docker
-    version: 3.12.1
+    version: 4.8.2
     source: https://galaxy.ansible.com
   - name: community.general
-    version: 9.4.0
+    version: 12.0.0
     source: https://galaxy.ansible.com
