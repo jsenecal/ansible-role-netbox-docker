@@ -17,7 +17,8 @@ This role is compatible with the following linux distributions:
 ### Netbox
 
 This role is compatible with the following versions of Netbox-Docker and should follow the same compatibility matrix as the upstream project for the most part:
-- [3.0.1](https://github.com/netbox-community/netbox-docker/releases/tag/3.0.1) (NetBox v4.1.x and above. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
+- [3.0.2](https://github.com/netbox-community/netbox-docker/releases/tag/3.0.2) (NetBox v4.1.x and above. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
+- [2.9.1](https://github.com/netbox-community/netbox-docker/releases/tag/2.9.1) (NetBox v4.0.x. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))]
 
 ## Installation
 

@@ -58,7 +58,7 @@ services:
     user: "unit:root"
     healthcheck:
       test: curl -f http://localhost:8080/login/ || exit 1
-      start_period: 90s
+      start_period: 120s
       timeout: 3s
       interval: 15s
     volumes:
@@ -76,8 +76,7 @@ services:
     {% endif %}
     restart: unless-stopped
     {% if netbox_container_labels %}
-    labels:
-      {{ netbox_container_labels | to_nice_yaml | indent(6) }}
+    labels: {{ netbox_container_labels | to_json }}
     {% endif %}
     networks:
       - default
@@ -94,16 +93,17 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      {% if netbox_resources_limits %}
+      resources:
+        limits: {{ netbox_resources_limits | to_json }}
+      {% endif %}
     logging:
       driver: "local"
       options:
         max-size: "10M"
         max-file: "10"
     {% if netbox_secrets | length > 0 %}
-    secrets:
-    {% for secret in netbox_secrets %}
-      - {{secret.name}}
-    {% endfor %}
+    secrets: {{ netbox_secrets | map(attribute='name') | list | to_json }}
     {% endif %}
 
   netbox-worker: &netbox-worker
@@ -138,6 +138,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      {% if netbox_resources_limits %}
+      resources:
+        limits: {{ netbox_resources_limits | to_json }}
+      {% endif %}
 
   netbox-housekeeping:
     <<: *netbox-worker
@@ -150,6 +154,10 @@ services:
       interval: 15s
     deploy:
       replicas: 1
+      {% if netbox_resources_limits %}
+      resources:
+        limits: {{ netbox_resources_limits | to_json }}
+      {% endif %}
 
   postgres:
     image: {{ netbox_postgres_image }}
@@ -175,7 +183,7 @@ services:
   pgbackups:
     image: {{ netbox_pgbackups_image }}
     restart: unless-stopped
-    env_file: "env/postgres.env"
+    env_file: "env/pgbackups.env"
     volumes:
       - type: bind
         source: "{{ netbox_base_path }}/backups"

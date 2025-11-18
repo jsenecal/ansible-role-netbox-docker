@@ -1,17 +1,19 @@
 FROM {{netbox_netbox_image}}
 {% set plugins_from_pip = netbox_plugins | selectattr('src', 'undefined') |  list %}
 {%- if plugins_from_pip %}
-RUN /opt/netbox/venv/bin/pip install --upgrade pip \
+RUN /usr/local/bin/uv pip install --upgrade pip \
     {% for plugin in plugins_from_pip -%}
-    {{ plugin.name }}{% if 'version' in plugin %}=={{ plugin.version }}{% endif %}{{ ' \\' if not loop.last else '' }}
+    {{ plugin.package_name | default(plugin.name) }}{% if 'version' in plugin %}=={{ plugin.version }}{% endif %}{{ ' \\' if not loop.last else '' }}
     {% endfor %}
 {%- endif %}
 {% set plugins_from_src = netbox_plugins | selectattr('src', 'defined') | map(attribute='name') | list %}
 {%- if plugins_from_src %}
 {%- for plugin in plugins_from_src %}
 COPY plugins/{{plugin}} /opt/{{plugin}}
-RUN /opt/netbox/venv/bin/pip install /opt/{{plugin}}/
+RUN /usr/local/bin/uv pip install /opt/{{plugin}}/
 {% endfor %}
 {%- endif %}
-
+{%- if netbox_extra_packages %}
+RUN /usr/local/bin/uv pip install {{ netbox_extra_packages|join(' ') }}
+{% endif %} 
 RUN SECRET_KEY="dummyKeyWithMinimumLengthMet-------------------------" /opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py collectstatic --no-input

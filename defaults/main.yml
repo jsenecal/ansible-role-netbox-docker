@@ -10,8 +10,11 @@ netbox_force_dockerfile_build: false # Force a rebuild of the netbox container
 
 # Version and Image Configuration
 # Netbox and netbox-docker versions and tag
-netbox_netbox_version: 4.1
-netbox_netbox_docker_version: 3.0.1
+netbox_netbox_version: 4.4.6
+netbox_netbox_src_org: netbox-community
+netbox_netbox_src_repo: netbox
+netbox_netbox_src_branch: latest
+netbox_netbox_docker_version: 3.4.2
 netbox_container_tag: v{{ netbox_netbox_version }}-{{ netbox_netbox_docker_version }}
 # Netbox docker image and tag
 netbox_netbox_image: docker.io/netboxcommunity/netbox:{{ netbox_container_tag }}
@@ -35,14 +38,15 @@ netbox_volumes:
   - type: bind
     source: "{{ netbox_base_path }}/reports"
     target: "{{ netbox_reports_volume_path }}"
-    read_only: true
   - type: bind
     source: "{{ netbox_base_path }}/scripts"
     target: "{{ netbox_scripts_volume_path }}"
-    read_only: true
   - type: bind
     source: "{{ netbox_base_path }}/media"
     target: "{{ netbox_media_volume_path }}"
+  - type: bind
+    source: "{{ netbox_base_path }}/static"
+    target: "{{ netbox_static_volume_path }}"
 
 # Secret files to mount into the netbox container
 # Format: {name:, path:}
@@ -154,3 +158,6 @@ netbox_extra_packages: [] # If provided, these python packages will be installed
 netbox_plugins: []
 # Configuration for netbox plugins, each key should be the name of a plugin, and the value should be a dictionary of configuration options for that plugin
 netbox_plugins_config: {}
+
+# Resources limits
+netbox_resources_limits: {}
