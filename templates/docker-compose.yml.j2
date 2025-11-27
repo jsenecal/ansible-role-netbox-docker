@@ -143,6 +143,7 @@ services:
         limits: {{ netbox_resources_limits | to_json }}
       {% endif %}
 
+{% if netbox_netbox_docker_version is version('3.4.0', '<') %}
   netbox-housekeeping:
     <<: *netbox-worker
     command:
@@ -158,6 +159,7 @@ services:
       resources:
         limits: {{ netbox_resources_limits | to_json }}
       {% endif %}
+{% endif %}
 
   postgres:
     image: {{ netbox_postgres_image }}
