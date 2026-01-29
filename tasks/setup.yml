@@ -12,8 +12,9 @@
   ansible.builtin.copy:
     content: "{{ item.content }}"
     dest: "{{ item.path }}"
-    mode: "0644"
-  with_items: "{{ netbox_secrets }}"
+    mode: "0600"
+  loop: "{{ netbox_secrets }}"
+  no_log: true
 
 - name: Ensure required netbox directories exist
   ansible.builtin.file:
@@ -29,13 +30,14 @@
   ansible.builtin.template:
     src: env/{{ item }}.j2
     dest: "{{ netbox_base_path }}/env/{{ item }}"
-    mode: "0644"
+    mode: "0600"
   loop:
     - netbox.env
     - postgres.env
     - valkey-cache.env
     - valkey.env
     - pgbackups.env
+  no_log: true
   notify: Restart netbox
 
 - name: Generate configuration files from templates

@@ -9,7 +9,7 @@
   ansible.builtin.assert:
     that:
       - item.type is defined
-      - item.source is defined and item.type != 'tmpfs'
+      - item.source is defined or item.type == 'tmpfs'
       - item.target is defined
     quiet: true
   loop: "{{ netbox_volumes }}"

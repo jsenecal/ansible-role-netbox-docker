@@ -81,7 +81,9 @@ services:
     networks:
       - default
     {% if netbox_additional_network_names %}
-      {% for network in netbox_additional_network_names %}- {{ network }}{% endfor %}
+      {% for network in netbox_additional_network_names %}
+      - {{ network }}
+      {% endfor %}
     {% endif %}
     deploy:
       replicas: 1
@@ -190,8 +192,6 @@ services:
       - type: bind
         source: "{{ netbox_base_path }}/backups"
         target: "/backups"
-    links:
-      - postgres
     depends_on:
       - postgres
     logging:

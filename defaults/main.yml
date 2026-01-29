@@ -3,14 +3,13 @@
 
 # Base Configuration
 netbox_base_path: /opt/netbox # Root path for netbox's docker-compose file and data store
-netbox_docker_path: /usr/local/src/netbox-docker # Path to netbox-docker source repository on the host
 netbox_docker_git_url: https://github.com/netbox-community/netbox-docker.git # Netbox docker git repository
 netbox_docker_build: false # Build netbox-docker container from source
 netbox_force_dockerfile_build: false # Force a rebuild of the netbox container
 
 # Version and Image Configuration
 # Netbox and netbox-docker versions and tag
-netbox_netbox_version: 4.4.6
+netbox_netbox_version: 4.5.2
 netbox_netbox_src_org: netbox-community
 netbox_netbox_src_repo: netbox
 netbox_netbox_src_branch: latest
@@ -29,8 +28,8 @@ netbox_pgbackups_image: docker.io/prodrigestivill/postgres-backup-local:16-alpin
 
 # Network Configuration
 netbox_port: 8080 # Host port to expose netbox on. If blank or null, netbox's port is not exposed
-netbox_additional_network_names: "" # Extra external networks to attach to the netbox container
-netbox_allowed_hosts: "*" # If set, connections will be restricted to this list of host names (also used in caddy)
+netbox_additional_network_names: [] # Extra external networks to attach to the netbox container
+netbox_allowed_hosts: ["*"] # If set, connections will be restricted to this list of host names (also used in caddy)
 
 # Volume Configuration
 # Volume mounts for netbox container
@@ -61,6 +60,7 @@ netbox_admin_password: admin # Password for the default admin user, created on f
 netbox_admin_username: admin # Username of the default admin user, created on first run
 
 # Database Configuration
+netbox_db_wait_debug: false # Enable debug output for database connection wait
 netbox_pg_db: netbox # Postgres database name
 netbox_pg_host: postgres # Postgres database host. This should not be changed if using the default docker-compose setup.
 # Postgres password
@@ -96,6 +96,7 @@ netbox_secret_key: >
   "{{ lookup(
     'ansible.builtin.password', '/tmp/netbox_secret_key.txt', chars=['ascii_letters'], length=50, seed=inventory_hostname+'.netbox_secret_key'
     ) }}"
+netbox_api_token_pepper_1: "" # Pepper value for API token hashing (NetBox >= 4.5)
 netbox_login_required: false # Whether or not a user must be authenticated to view DCIM details in Netbox
 # Web Server Configuration
 netbox_use_caddy: false # If set, Caddy will be used to serve Netbox over TLS
@@ -143,7 +144,7 @@ netbox_metrics_enabled: false # Expose Prometheus monitoring metrics at the HTTP
 netbox_webhooks_enabled: true # If true, enable netbox webhooks functionality
 
 # Container Configuration
-netbox_container_env: [] # Optional extra container environment variables to apply to the netbox container
+netbox_container_env: {} # Optional extra container environment variables to apply to the netbox container
 netbox_container_labels: [] # Optional extra container labels to apply to the netbox container
 netbox_skip_startup_scripts: false # If true, do not run startup scripts on container start
 netbox_skip_superuser: false # If true, do not create superuser on container start
