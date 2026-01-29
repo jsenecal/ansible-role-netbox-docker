@@ -1,7 +1,7 @@
 FROM {{netbox_netbox_image}}
 {% set plugins_from_pip = netbox_plugins | selectattr('src', 'undefined') |  list %}
 {%- if plugins_from_pip %}
-RUN /usr/local/bin/uv pip install --upgrade pip \
+RUN /usr/local/bin/uv pip install \
     {% for plugin in plugins_from_pip -%}
     {{ plugin.package_name | default(plugin.name) }}{% if 'version' in plugin %}=={{ plugin.version }}{% endif %}{{ ' \\' if not loop.last else '' }}
     {% endfor %}
