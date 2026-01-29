@@ -9,7 +9,7 @@ netbox_force_dockerfile_build: false # Force a rebuild of the netbox container
 
 # Version and Image Configuration
 # Netbox and netbox-docker versions and tag
-netbox_netbox_version: 4.5.2
+netbox_netbox_version: 4.5.1
 netbox_netbox_src_org: netbox-community
 netbox_netbox_src_repo: netbox
 netbox_netbox_src_branch: latest

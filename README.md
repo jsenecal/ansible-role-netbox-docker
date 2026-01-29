@@ -61,7 +61,7 @@ Configuration and installation options are made available as variables. Some of 
 | --------------------------------- | ------------------------- | --------------------------------------------------- |
 | `netbox_base_path`                 | `/opt/netbox`             | Root path for netbox's docker-compose file and data store |
 | `netbox_port`                     | `8080`                    | Host port to expose netbox on. If blank, netbox's port is not exposed |
-| `netbox_netbox_image`             | `docker.io/netboxcommunity/netbox:v4.5.2-3.4.2` | Netbox docker image tag       |
+| `netbox_netbox_image`             | `docker.io/netboxcommunity/netbox:v4.5.1-3.4.2` | Netbox docker image tag       |
 | `netbox_valkey_image`             | `docker.io/valkey/valkey:8.0-alpine`          | Valkey docker image tag         |
 | `netbox_postgres_image`           | `docker.io/postgres:16-alpine`                | Postgres docker image tag       |
 | `netbox_caddy_image`              | `docker.io/caddy:2-alpine`                    | Caddy docker image tag          |
