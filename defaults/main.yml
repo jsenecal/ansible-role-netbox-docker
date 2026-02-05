@@ -160,5 +160,10 @@ netbox_plugins: []
 # Configuration for netbox plugins, each key should be the name of a plugin, and the value should be a dictionary of configuration options for that plugin
 netbox_plugins_config: {}
 
+# Custom Docker Compose additions
+netbox_extra_services: {} # Additional services to include in the docker-compose file
+netbox_extra_volumes: {} # Additional top-level volumes to include in the docker-compose file
+netbox_extra_networks: {} # Additional top-level networks to include in the docker-compose file
+
 # Resources limits
 netbox_resources_limits: {}

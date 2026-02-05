@@ -244,6 +244,10 @@ services:
         max-size: "10M"
         max-file: "10"
 
+{% if netbox_extra_services %}
+{{ {'services': netbox_extra_services} | to_nice_yaml(indent=2) | regex_replace('^services:\n', '') }}
+{% endif %}
+
 volumes:
   netbox-media-files:
     driver: local
@@ -257,14 +261,20 @@ volumes:
   netbox-caddy-data:
   netbox-caddy-config:
 {% endif %}
+{% if netbox_extra_volumes %}
+{{ {'volumes': netbox_extra_volumes} | to_nice_yaml(indent=2) | regex_replace('^volumes:\n', '') }}
+{% endif %}
 
-{% if netbox_additional_network_names %}
+{% if netbox_additional_network_names or netbox_extra_networks %}
 networks:
 {% for network in netbox_additional_network_names %}
   {{ network }}:
     name: {{ network }}
     external: true
 {% endfor %}
+{% if netbox_extra_networks %}
+{{ {'networks': netbox_extra_networks} | to_nice_yaml(indent=2) | regex_replace('^networks:\n', '') }}
+{% endif %}
 {% endif %}
 
 {% if netbox_secrets is defined and netbox_secrets | length > 0 %}
