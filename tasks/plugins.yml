@@ -4,6 +4,7 @@
     repo: "{{ item.src }}"
     dest: "{{ netbox_base_path }}/plugins/{{ item.name }}"
     version: "{{ item.version | default('HEAD') }}"
+    force: true
   loop: "{{ netbox_plugins }}"
   when: item.src is defined
   register: netbox_plugins_result
