@@ -114,8 +114,9 @@ Configuration and installation options are made available as variables. Some of 
 | `netbox_ssl_cert_bundle`          | -                         | Caddy certificate bundle                            |
 | `netbox_ssl_cert_key`             | -                         | Caddy certificate key                               |
 | `netbox_extra_config`             | -                         | If provided, this string will be rendered __as is__ in [`config/extra.py`](https://github.com/netbox-community/netbox-docker/blob/release/configuration/extra.py) |
-| `netbox_extra_services`           | -                         | Additional services to include in the docker-compose file |
-| `netbox_extra_volumes`            | -                         | Additional volumes for the nebox container to include in the docker-compose file |
+| `netbox_extra_services`           | `{}`                      | Additional services to include in the docker-compose file |
+| `netbox_extra_volumes`            | `{}`                      | Additional top-level volumes to include in the docker-compose file |
+| `netbox_extra_networks`           | `{}`                      | Additional top-level networks to include in the docker-compose file |
 
 Some additional variables are available for advanced configuration. Please refer to the [defaults/main.yml](defaults/main.yml) file for a complete list.
 
