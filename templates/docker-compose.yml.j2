@@ -63,7 +63,8 @@ services:
       interval: 15s
     volumes:
       {{ netbox_volumes | to_nice_yaml(indent=2) | indent(6, false) }}
-      - ./configuration:/etc/netbox/config:z,ro
+      - ./configuration/extra.py:/etc/netbox/config/extra.py:z,ro
+      - ./configuration/plugins.py:/etc/netbox/config/plugins.py:z,ro
     {% if netbox_port and not netbox_use_caddy %}
     ports:
       - "{{ netbox_port }}:8080"
