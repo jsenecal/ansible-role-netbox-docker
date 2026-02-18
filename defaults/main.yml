@@ -60,6 +60,7 @@ netbox_admin_password: admin # Password for the default admin user, created on f
 netbox_admin_username: admin # Username of the default admin user, created on first run
 
 # Database Configuration
+netbox_db_wait_debug: false # Print full tracebacks when waiting for the database to become ready
 netbox_pg_db: netbox # Postgres database name
 netbox_pg_host: postgres # Postgres database host. This should not be changed if using the default docker-compose setup.
 # Postgres password
