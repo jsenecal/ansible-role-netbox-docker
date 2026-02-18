@@ -17,7 +17,8 @@ This role is compatible with the following linux distributions:
 ### Netbox
 
 This role is compatible with the following versions of Netbox-Docker and should follow the same compatibility matrix as the upstream project for the most part:
-- [3.4.2](https://github.com/netbox-community/netbox-docker/releases/tag/3.4.2) (NetBox v4.5.x. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
+- [4.0.0](https://github.com/netbox-community/netbox-docker/releases/tag/4.0.0) (NetBox v4.5.x. Uses Granian instead of Nginx Unit. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
+- [3.4.2](https://github.com/netbox-community/netbox-docker/releases/tag/3.4.2) (NetBox v4.5.x. Legacy, uses Nginx Unit. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
 - [3.0.2](https://github.com/netbox-community/netbox-docker/releases/tag/3.0.2) (NetBox v4.1.x - v4.4.x. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
 - [2.9.1](https://github.com/netbox-community/netbox-docker/releases/tag/2.9.1) (NetBox v4.0.x. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
 
@@ -61,9 +62,9 @@ Configuration and installation options are made available as variables. Some of 
 | --------------------------------- | ------------------------- | --------------------------------------------------- |
 | `netbox_base_path`                 | `/opt/netbox`             | Root path for netbox's docker-compose file and data store |
 | `netbox_port`                     | `8080`                    | Host port to expose netbox on. If blank, netbox's port is not exposed |
-| `netbox_netbox_image`             | `docker.io/netboxcommunity/netbox:v4.5.1-3.4.2` | Netbox docker image tag       |
-| `netbox_valkey_image`             | `docker.io/valkey/valkey:8.0-alpine`          | Valkey docker image tag         |
-| `netbox_postgres_image`           | `docker.io/postgres:16-alpine`                | Postgres docker image tag       |
+| `netbox_netbox_image`             | `docker.io/netboxcommunity/netbox:v4.5.1-4.0.0` | Netbox docker image tag       |
+| `netbox_valkey_image`             | `docker.io/valkey/valkey:9.0-alpine`          | Valkey docker image tag         |
+| `netbox_postgres_image`           | `docker.io/postgres:16-alpine`                | Postgres docker image tag. Upstream 4.0.0 uses PostgreSQL 18, but upgrading requires a manual `pg_upgrade` or dump/restore. |
 | `netbox_caddy_image`              | `docker.io/caddy:2-alpine`                    | Caddy docker image tag          |
 | `netbox_admin_api_token`          | -                         | API token for the default admin user, created on first run |
 | `netbox_admin_email`              | `admin@example.com`       | Email of the default admin user, created on first run |
@@ -85,7 +86,8 @@ Configuration and installation options are made available as variables. Some of 
 | `netbox_email_username`           | `netbox`                  | [Email server settings documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#std:setting-EMAIL_HOST) |
 | `netbox_enforce_global_unique`    | `false`                   | Enforcement of unique IP space can be toggled on a per-VRF basis. To enforce unique IP space within the global table, set this to true |
 | `netbox_graphql_enabled`          | `true`                    | Enable GraphQL API                                  |
-| `netbox_housekeeping_interval`    | `86400`                   | Interval to run housekeeping worker                 |
+| `netbox_granian_workers`          | `4`                       | Number of Granian worker processes                  |
+| `netbox_granian_backpressure`     | `4`                       | Granian backpressure setting                        |
 | `netbox_container_labels`         | `[]`                      | Optional extra container labels to apply to the netbox container. See [Traefiknginx-proxy Support](#traefiknginx-proxy-support) |
 | `netbox_container_env`            | `[]`                      | Optional extra container environment variables to apply to the netbox container. See [Traefik/nginx-proxy Support](#traefiknginx-proxy-support) |
 | `netbox_login_required`           | `false`                   | Whether or not a user must be authenticated to view DCIM details in Netbox |
@@ -96,11 +98,11 @@ Configuration and installation options are made available as variables. Some of 
 | `netbox_pg_password`              | `RANDOM_SEED`             | Postgres password                                   |
 | `netbox_pg_user`                  | `netbox`                  | Postgres user                                       |
 | `netbox_additional_network_names` | -                         | Extra external networks to attach to the netbox container. See [Traefik/nginx-proxy Support](#traefiknginx-proxy-support) |
-| `netbox_valkey_cache_host`        | `valkey-cache`            | Valkey cache instance host. This should not be changed if using the default docker-compose setup. |
+| `netbox_valkey_cache_host`        | `redis-cache`             | Valkey cache instance host. This should not be changed if using the default docker-compose setup. |
 | `netbox_valkey_cache_insecure_skip_tls_verify` | `false`      | If true, certificates for valkey cache are not checked |
 | `netbox_valkey_cache_password`    | `RANDOM_SEED`             | Valkey cache instance password                      |
 | `netbox_valkey_cache_ssl`         | `false`                   | If true, communication with valkey is secured with SSL |
-| `netbox_valkey_host`              | `valkey`                  | Valkey instance host. This should not be changed if using the default docker-compose setup. |
+| `netbox_valkey_host`              | `redis`                   | Valkey instance host. This should not be changed if using the default docker-compose setup. |
 | `netbox_valkey_insecure_skip_tls_verify` | `false`            | If true, certificates for valkey are not checked    |
 | `netbox_valkey_password`          | `RANDOM_SEED`             | Valkey instance password                            |
 | `netbox_secret_key`               | `RANDOM_SEED`             | [Netbox secret key](https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-SECRET_KEY). Should be at least 50 characters long |

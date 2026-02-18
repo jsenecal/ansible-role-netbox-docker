@@ -21,10 +21,11 @@ The main task flow (`tasks/main.yml`) executes in this order:
 ### Key Components
 
 **Configuration Templates** (`templates/`):
-- `docker-compose.yml.j2` - Main orchestration file (netbox, postgres, valkey, optional caddy)
+- `docker-compose.yml.j2` - Main orchestration file (netbox, postgres, redis, redis-cache, optional caddy)
 - `Dockerfile.j2` - Custom NetBox image with plugins and extra packages
-- `env/*.env.j2` - Environment variables for each service (netbox, postgres, valkey, pgbackups)
-- `extra.py.j2` - NetBox Django configuration extensions
+- `env/*.env.j2` - Environment variables for each service (netbox, postgres, redis, redis-cache, pgbackups)
+- `configuration/extra.py.j2` - NetBox Django configuration extensions (ADMINS, logging, extra config)
+- `configuration/plugins.py.j2` - NetBox plugin configuration (PLUGINS, PLUGINS_CONFIG)
 - `Caddyfile.j2` - TLS reverse proxy configuration
 
 **Build System**:
@@ -45,8 +46,8 @@ The main task flow (`tasks/main.yml`) executes in this order:
 - Auto-set when `netbox_plugins` or `netbox_extra_packages` are defined
 
 **Versions**:
-- `netbox_netbox_version` - NetBox application version (e.g., 4.4.6)
-- `netbox_netbox_docker_version` - netbox-docker wrapper version (e.g., 3.4.2)
+- `netbox_netbox_version` - NetBox application version (e.g., 4.5.1)
+- `netbox_netbox_docker_version` - netbox-docker wrapper version (e.g., 4.0.0)
 - Combined as: `v{netbox_version}-{docker_version}` for image tags
 
 **Secrets** (auto-generated with ansible.builtin.password lookup):
@@ -99,7 +100,7 @@ netbox_ssl_cert_key: /path/to/localhost+2-key.pem
 
 **Adding new configuration options**:
 1. Add default value in `defaults/main.yml`
-2. Add to appropriate template (usually `netbox.env.j2` or `extra.py.j2`)
+2. Add to appropriate template (usually `netbox.env.j2` or `configuration/extra.py.j2`)
 3. Document in README.md variables table
 
 **Testing plugin installation**:
@@ -121,6 +122,9 @@ Set `netbox_plugins` in playbook, role will automatically trigger Dockerfile bui
 ├── templates/
 │   ├── docker-compose.yml.j2 # Main compose file
 │   ├── Dockerfile.j2         # Custom build with plugins
+│   ├── configuration/        # NetBox configuration templates
+│   │   ├── extra.py.j2      # Django extra config (ADMINS, logging)
+│   │   └── plugins.py.j2    # Plugin configuration
 │   ├── env/                  # Environment variable templates
 │   └── *.j2                  # Other config templates
 └── meta/main.yml             # Role metadata

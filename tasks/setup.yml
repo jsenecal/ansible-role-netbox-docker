@@ -23,6 +23,7 @@
     recurse: true
   loop:
     - env
+    - configuration
     - db
     - backups
 
@@ -34,8 +35,8 @@
   loop:
     - netbox.env
     - postgres.env
-    - valkey-cache.env
-    - valkey.env
+    - redis-cache.env
+    - redis.env
     - pgbackups.env
   no_log: true
   notify: Restart netbox
@@ -47,8 +48,16 @@
     mode: "0644"
   loop:
     - docker-compose.yml
-    - extra.py
     - Caddyfile
-    - nginx-unit.json
     - Dockerfile
+  notify: Restart netbox
+
+- name: Generate configuration directory files from templates
+  ansible.builtin.template:
+    src: "configuration/{{ item }}.j2"
+    dest: "{{ netbox_base_path }}/configuration/{{ item }}"
+    mode: "0644"
+  loop:
+    - extra.py
+    - plugins.py
   notify: Restart netbox

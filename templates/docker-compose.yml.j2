@@ -52,21 +52,18 @@ services:
     {% endif %}
     depends_on:
       - postgres
-      - valkey
-      - valkey-cache
+      - redis
+      - redis-cache
     env_file: env/netbox.env
-    user: "unit:root"
+    user: "netbox:root"
     healthcheck:
       test: curl -f http://localhost:8080/login/ || exit 1
-      start_period: 120s
+      start_period: 90s
       timeout: 3s
       interval: 15s
     volumes:
       {{ netbox_volumes | to_nice_yaml(indent=2) | indent(6, false) }}
-      - ./nginx-unit.json:/etc/unit/nginx-unit.json:ro
-      - ./extra.py:/etc/netbox/config/extra.py:ro
-    security_opt:
-      - seccomp:unconfined
+      - ./configuration:/etc/netbox/config:z,ro
     {% if netbox_port and not netbox_use_caddy %}
     ports:
       - "{{ netbox_port }}:8080"
@@ -111,7 +108,7 @@ services:
   netbox-worker: &netbox-worker
     <<: *netbox
     depends_on:
-      valkey:
+      redis:
         condition: service_healthy
       netbox:
         condition: service_healthy
@@ -145,29 +142,11 @@ services:
         limits: {{ netbox_resources_limits | to_json }}
       {% endif %}
 
-{% if netbox_netbox_docker_version is version('3.4.0', '<') %}
-  netbox-housekeeping:
-    <<: *netbox-worker
-    command:
-      - /opt/netbox/housekeeping.sh
-    healthcheck:
-      test: ps -aux | grep -v grep | grep -q housekeeping || exit 1
-      start_period: 20s
-      timeout: 3s
-      interval: 15s
-    deploy:
-      replicas: 1
-      {% if netbox_resources_limits %}
-      resources:
-        limits: {{ netbox_resources_limits | to_json }}
-      {% endif %}
-{% endif %}
-
   postgres:
     image: {{ netbox_postgres_image }}
     env_file: env/postgres.env
     volumes:
-      - netbox-postgres-data:/var/lib/postgresql/data
+      - netbox-postgres-data:/var/lib/postgresql
     networks:
       - default
     restart: unless-stopped
@@ -201,20 +180,20 @@ services:
         max-file: "10"
 {% endif %}
 
-  valkey:
+  redis:
     image: {{ netbox_valkey_image }}
     command:
       - sh
-      - -c # this is to evaluate the $VALKEY_PASSWORD from the env
-      - valkey-server --appendonly yes --requirepass $$VALKEY_PASSWORD ## $$ because of docker-compose
-    env_file: env/valkey.env
+      - -c # this is to evaluate the $REDIS_PASSWORD from the env
+      - valkey-server --appendonly yes --requirepass $$REDIS_PASSWORD ## $$ because of docker-compose
+    env_file: env/redis.env
     volumes:
-      - netbox-valkey-data:/data
+      - netbox-redis-data:/data
     networks:
       - default
     restart: unless-stopped
-    healthcheck: &valkey-healthcheck
-      test: '[ $$(valkey-cli --pass "$${VALKEY_PASSWORD}" ping) = ''PONG'' ]'
+    healthcheck: &redis-healthcheck
+      test: '[ $$(valkey-cli --pass "$${REDIS_PASSWORD}" ping) = ''PONG'' ]'
       start_period: 5s
       timeout: 3s
       interval: 1s
@@ -225,19 +204,19 @@ services:
         max-size: "10M"
         max-file: "10"
 
-  valkey-cache:
+  redis-cache:
     image: {{ netbox_valkey_image }}
     command:
       - sh
-      - -c # this is to evaluate the $VALKEY_PASSWORD from the env
-      - valkey-server --requirepass $$VALKEY_PASSWORD ## $$ because of docker-compose
-    env_file: env/valkey-cache.env
+      - -c # this is to evaluate the $REDIS_PASSWORD from the env
+      - valkey-server --requirepass $$REDIS_PASSWORD ## $$ because of docker-compose
+    env_file: env/redis-cache.env
     volumes:
-    - netbox-valkey-cache-data:/data    
+      - netbox-redis-cache-data:/data
     networks:
       - default
     restart: unless-stopped
-    healthcheck: *valkey-healthcheck
+    healthcheck: *redis-healthcheck
     logging:
       driver: "local"
       options:
@@ -253,9 +232,9 @@ volumes:
     driver: local
   netbox-postgres-data:
     driver: local
-  netbox-valkey-data:
+  netbox-redis-data:
     driver: local
-  netbox-valkey-cache-data:
+  netbox-redis-cache-data:
     driver: local
 {% if netbox_use_caddy %}
   netbox-caddy-data:

@@ -1,4 +1,56 @@
 ---
+# PostgreSQL major version safety check
+# Detects if the running postgres container's major version differs from the
+# target image. A major version change requires a manual pg_dump/pg_restore
+# since PostgreSQL data directories are not forwards-compatible.
+- name: Check for existing PostgreSQL container
+  community.docker.docker_container_info:
+    name: "{{ (netbox_base_path | basename) }}-postgres-1"
+  register: _netbox_pg_container
+  failed_when: false
+
+- name: Validate PostgreSQL major version compatibility
+  when: _netbox_pg_container.exists | default(false)
+  block:
+    - name: Determine running PostgreSQL major version from container environment
+      ansible.builtin.set_fact:
+        _netbox_pg_running_major: >-
+          {{ (_netbox_pg_container.container.Config.Env
+             | select('match', '^PG_MAJOR=')
+             | map('regex_replace', '^PG_MAJOR=', '')
+             | list or [''])[0] }}
+
+    - name: Determine target PostgreSQL major version from image tag
+      ansible.builtin.set_fact:
+        _netbox_pg_target_major: >-
+          {{ (netbox_postgres_image | regex_search('postgres:(\d+)', '\1') or [''])[0] }}
+
+    - name: Fail if PostgreSQL major version mismatch detected
+      ansible.builtin.fail:
+        msg: |
+          PostgreSQL major version mismatch detected!
+
+          Running: PostgreSQL {{ _netbox_pg_running_major }} ({{ _netbox_pg_container.container.Config.Image }})
+          Target:  PostgreSQL {{ _netbox_pg_target_major }} ({{ netbox_postgres_image }})
+
+          A PostgreSQL major version upgrade requires a manual dump and restore.
+          The role cannot automatically migrate the data directory.
+
+          To upgrade:
+            1. Backup your database:
+               docker exec {{ (netbox_base_path | basename) }}-postgres-1 pg_dumpall -U {{ netbox_pg_user }} > /tmp/netbox_pg_backup.sql
+            2. Stop the project:
+               docker compose -p {{ netbox_base_path | basename }} down
+            3. Remove the postgres data volume:
+               docker volume rm {{ netbox_base_path | basename }}_netbox-postgres-data
+            4. Run the playbook again (it will start fresh with the new version)
+            5. Restore the backup:
+               docker exec -i {{ (netbox_base_path | basename) }}-postgres-1 psql -U {{ netbox_pg_user }} -d {{ netbox_pg_db }} < /tmp/netbox_pg_backup.sql
+      when:
+        - _netbox_pg_running_major | length > 0
+        - _netbox_pg_target_major | length > 0
+        - _netbox_pg_running_major != _netbox_pg_target_major
+
 - name: Verify mandatory netbox_volumes are present
   ansible.builtin.assert:
     that: item in (netbox_volumes | map(attribute='target') | list)

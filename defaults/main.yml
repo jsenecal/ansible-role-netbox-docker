@@ -13,12 +13,12 @@ netbox_netbox_version: 4.5.1
 netbox_netbox_src_org: netbox-community
 netbox_netbox_src_repo: netbox
 netbox_netbox_src_branch: latest
-netbox_netbox_docker_version: 3.4.2
+netbox_netbox_docker_version: 4.0.0
 netbox_container_tag: v{{ netbox_netbox_version }}-{{ netbox_netbox_docker_version }}
 # Netbox docker image and tag
 netbox_netbox_image: docker.io/netboxcommunity/netbox:{{ netbox_container_tag }}
 # Valkey docker image and tag
-netbox_valkey_image: docker.io/valkey/valkey:8.0-alpine
+netbox_valkey_image: docker.io/valkey/valkey:9.0-alpine
 # Postgres docker image and tag
 netbox_postgres_image: docker.io/postgres:16-alpine
 # Caddy docker image and tag
@@ -60,7 +60,6 @@ netbox_admin_password: admin # Password for the default admin user, created on f
 netbox_admin_username: admin # Username of the default admin user, created on first run
 
 # Database Configuration
-netbox_db_wait_debug: false # Enable debug output for database connection wait
 netbox_pg_db: netbox # Postgres database name
 netbox_pg_host: postgres # Postgres database host. This should not be changed if using the default docker-compose setup.
 # Postgres password
@@ -70,14 +69,14 @@ netbox_pg_password: >
     ) }}"
 netbox_pg_user: netbox # Postgres user
 # Redis Configuration
-netbox_valkey_host: valkey # Valkey instance host. This should not be changed if using the default docker-compose setup.
+netbox_valkey_host: redis # Valkey instance host. This should not be changed if using the default docker-compose setup.
 # Valkey instance password
 netbox_valkey_password: >
   "{{ lookup(
     'ansible.builtin.password', '/tmp/netbox_valkey_password.txt', chars=['ascii_letters'], length=16, seed=inventory_hostname + '.netbox_valkey_password'
     ) }}"
 netbox_valkey_insecure_skip_tls_verify: false # If true, certificates for valkey are not checked
-netbox_valkey_cache_host: valkey-cache # Valkey cache instance host. This should not be changed if using the default docker-compose setup.
+netbox_valkey_cache_host: redis-cache # Valkey cache instance host. This should not be changed if using the default docker-compose setup.
 # Valkey cache instance password
 netbox_valkey_cache_password: >
   "{{ lookup(
@@ -138,7 +137,6 @@ netbox_default_page_size: 250 # Default number of objects for paginated views
 netbox_default_timezone: UTC # Default time zone for the Netbox instance
 netbox_enforce_global_unique: false # Enforcement of unique IP space within the global table
 netbox_graphql_enabled: true # Enable GraphQL API
-netbox_housekeeping_interval: 86400 # Interval to run housekeeping worker
 netbox_max_page_size: 1000 # Maximum number of objects for paginated API requests
 netbox_metrics_enabled: false # Expose Prometheus monitoring metrics at the HTTP endpoint '/metrics'
 netbox_webhooks_enabled: true # If true, enable netbox webhooks functionality
@@ -146,6 +144,8 @@ netbox_webhooks_enabled: true # If true, enable netbox webhooks functionality
 # Container Configuration
 netbox_container_env: {} # Optional extra container environment variables to apply to the netbox container
 netbox_container_labels: [] # Optional extra container labels to apply to the netbox container
+netbox_granian_workers: 4 # Number of Granian worker processes
+netbox_granian_backpressure: 4 # Granian backpressure setting
 netbox_skip_startup_scripts: false # If true, do not run startup scripts on container start
 netbox_skip_superuser: false # If true, do not create superuser on container start
 # Timezone for the containers, set to an empty string to not set a timezone environment variable
