@@ -3,20 +3,14 @@
 
 ####
 ## This file contains plugin configuration for NetBox.
-## Plugins are loaded from the base configuration and extended here.
+## Variables defined here are merged into the NetBox configuration
+## by the configuration loader.
 ####
 
 import yaml
 
-from netbox.configuration.configuration import PLUGINS
-from netbox.configuration.configuration import PLUGINS_CONFIG
+PLUGINS = [{% for plugin in netbox_plugins %}"{{ plugin.name }}", {% endfor %}]
 
-{% for plugin in netbox_plugins %}
-PLUGINS.append("{{ plugin.name }}")
-{% endfor %}
-
-{% if netbox_plugins_config %}
 plugins_config_yaml = """
 {{ netbox_plugins_config | to_nice_yaml() }}"""
-PLUGINS_CONFIG.update(yaml.safe_load(plugins_config_yaml))
-{% endif %}
+PLUGINS_CONFIG = yaml.safe_load(plugins_config_yaml)
