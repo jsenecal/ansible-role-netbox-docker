@@ -17,7 +17,7 @@ This role is compatible with the following linux distributions:
 ### Netbox
 
 This role is compatible with the following versions of Netbox-Docker and should follow the same compatibility matrix as the upstream project for the most part:
-- [4.0.0](https://github.com/netbox-community/netbox-docker/releases/tag/4.0.0) (NetBox v4.5.x. Uses Granian instead of Nginx Unit. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
+- [4.0.2](https://github.com/netbox-community/netbox-docker/releases/tag/4.0.2) (NetBox v4.5.x. Uses Granian instead of Nginx Unit. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
 - [3.4.2](https://github.com/netbox-community/netbox-docker/releases/tag/3.4.2) (NetBox v4.5.x. Legacy, uses Nginx Unit. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
 - [3.0.2](https://github.com/netbox-community/netbox-docker/releases/tag/3.0.2) (NetBox v4.1.x - v4.4.x. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
 - [2.9.1](https://github.com/netbox-community/netbox-docker/releases/tag/2.9.1) (NetBox v4.0.x. See [NetBox Releases](https://github.com/netbox-community/netbox/releases))
@@ -62,7 +62,7 @@ Configuration and installation options are made available as variables. Some of 
 | --------------------------------- | ------------------------- | --------------------------------------------------- |
 | `netbox_base_path`                 | `/opt/netbox`             | Root path for netbox's docker-compose file and data store |
 | `netbox_port`                     | `8080`                    | Host port to expose netbox on. If blank, netbox's port is not exposed |
-| `netbox_netbox_image`             | `docker.io/netboxcommunity/netbox:v4.5.1-4.0.0` | Netbox docker image tag       |
+| `netbox_netbox_image`             | `docker.io/netboxcommunity/netbox:v4.5.9-4.0.2` | Netbox docker image tag       |
 | `netbox_valkey_image`             | `docker.io/valkey/valkey:9.0-alpine`          | Valkey docker image tag         |
 | `netbox_postgres_image`           | `docker.io/postgres:16-alpine`                | Postgres docker image tag. Upstream 4.0.0 uses PostgreSQL 18, but upgrading requires a manual `pg_upgrade` or dump/restore. |
 | `netbox_caddy_image`              | `docker.io/caddy:2-alpine`                    | Caddy docker image tag          |
