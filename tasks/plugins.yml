@@ -6,5 +6,9 @@
     version: "{{ item.version | default('HEAD') }}"
     force: true
   loop: "{{ netbox_plugins }}"
+  loop_control:
+    label: "{{ item.name }}"
+  # src may embed credentials (https://user:token@host/...); hide those items' results
+  no_log: "{{ (item.src | default('')) is search('://[^/]+@') }}"
   when: item.src is defined
   register: netbox_plugins_result
