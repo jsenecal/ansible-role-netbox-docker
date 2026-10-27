@@ -15,7 +15,7 @@
 
 - name: Set build to true if plugins or extra packages are required
   ansible.builtin.set_fact:
-    netbox_force_dockerfile_build: "{{ netbox_plugins or netbox_extra_packages }}"
+    netbox_force_dockerfile_build: "{{ netbox_plugins or netbox_extra_packages or netbox_apt_packages }}"
   when: not netbox_force_dockerfile_build
 
 - name: Ensure netbox compose project is running
@@ -24,5 +24,5 @@
     state: present
     build: "{% if netbox_force_dockerfile_build %}always{% else %}policy{% endif %}"
   register: netbox_docker_compose_result
-  async: 600 # timeout in seconds (10 minutes)
-  poll: 10 # check status every 10 seconds
+  async: "{{ netbox_compose_async_timeout }}"
+  poll: "{{ netbox_compose_poll_interval }}"

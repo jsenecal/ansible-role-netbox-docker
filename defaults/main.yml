@@ -69,6 +69,9 @@ netbox_pg_password: >
     'ansible.builtin.password', '/tmp/netbox_pg_password.txt', chars=['ascii_letters'], length=16, seed=inventory_hostname + '.netbox_pg_password'
     ) }}"
 netbox_pg_user: netbox # Postgres user
+# Override Django's database backend. NetBox defaults to django.db.backends.postgresql;
+# set to django.contrib.gis.db.backends.postgis when using PostGIS-dependent plugins.
+netbox_db_engine: ""
 # Redis Configuration
 netbox_valkey_host: redis # Valkey instance host. This should not be changed if using the default docker-compose setup.
 # Valkey instance password
@@ -156,6 +159,7 @@ netbox_workers: 1 # Number of netbox worker containers to run (1 or more)
 # Extra Configuration
 netbox_extra_config: "" # If provided, this string will be rendered in `config/extra.py` as is.
 netbox_extra_packages: [] # If provided, these python packages will be installed in the netbox container
+netbox_apt_packages: [] # If provided, these Debian/Ubuntu packages will be apt-installed in the netbox container (e.g. gdal-bin, libgeos-dev for GIS plugins)
 # List of netbox plugins to install. Each item should be a dictionary with the keys 'name' (mandatory), 'src' (optional), and 'version' (optional)
 netbox_plugins: []
 # Configuration for netbox plugins, each key should be the name of a plugin, and the value should be a dictionary of configuration options for that plugin
@@ -168,3 +172,15 @@ netbox_extra_networks: {} # Additional top-level networks to include in the dock
 
 # Resources limits
 netbox_resources_limits: {}
+
+# Compose-up async budget. Bumped above 10 min when first-boot includes a custom
+# image build, large image pulls, or fresh-DB migrations.
+netbox_compose_async_timeout: 1800 # Wallclock seconds Ansible waits for `docker compose up` to finish
+netbox_compose_poll_interval: 10 # Seconds between Ansible polls of the async job
+
+# Netbox container healthcheck. Bump start_period when first-boot runs many
+# plugin migrations on a fresh DB (each plugin adds migration time before
+# /login/ becomes responsive).
+netbox_healthcheck_start_period: 90s
+netbox_healthcheck_interval: 15s
+netbox_healthcheck_timeout: 3s

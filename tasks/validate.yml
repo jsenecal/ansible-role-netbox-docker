@@ -23,7 +23,7 @@
     - name: Determine target PostgreSQL major version from image tag
       ansible.builtin.set_fact:
         _netbox_pg_target_major: >-
-          {{ (netbox_postgres_image | regex_search('postgres:(\d+)', '\1') or [''])[0] }}
+          {{ (netbox_postgres_image | regex_search('(?:postgres|postgis)[^:]*:(\d+)', '\1') or [''])[0] }}
 
     - name: Fail if PostgreSQL major version mismatch detected
       ansible.builtin.fail:

@@ -27,4 +27,14 @@ ADMINS = [
 {% endfor %}
 ]
 
+{% if netbox_db_engine %}
+# netbox-docker loads each config file as its own isolated module under
+# /etc/netbox/config/ and merges them via a module-level __getattr__ in the
+# parent `netbox.configuration` namespace. That means names defined in
+# configuration.py aren't in scope here. Import DATABASES by reference (dicts
+# are shared) and mutate the ENGINE key in place — the change is visible to
+# the configuration.py module the rest of NetBox reads from.
+from netbox.configuration.configuration import DATABASES as _DATABASES
+_DATABASES["default"]["ENGINE"] = "{{ netbox_db_engine }}"
+{% endif %}
 {{ netbox_extra_config }}

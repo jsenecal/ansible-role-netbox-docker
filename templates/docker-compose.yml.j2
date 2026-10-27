@@ -58,9 +58,9 @@ services:
     user: "netbox:root"
     healthcheck:
       test: curl -f http://localhost:8080/login/ || exit 1
-      start_period: 90s
-      timeout: 3s
-      interval: 15s
+      start_period: {{ netbox_healthcheck_start_period }}
+      timeout: {{ netbox_healthcheck_timeout }}
+      interval: {{ netbox_healthcheck_interval }}
     volumes:
       {{ netbox_volumes | to_nice_yaml(indent=2) | indent(6, false) }}
       - ./configuration/extra.py:/etc/netbox/config/extra.py:z,ro

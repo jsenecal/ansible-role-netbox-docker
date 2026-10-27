@@ -1,4 +1,9 @@
 FROM {{netbox_netbox_image}}
+{% if netbox_apt_packages %}
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends {{ netbox_apt_packages | join(' ') }} \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+{% endif %}
 {% set plugins_from_pip = netbox_plugins | selectattr('src', 'undefined') |  list %}
 {%- if plugins_from_pip %}
 RUN /usr/local/bin/uv pip install \

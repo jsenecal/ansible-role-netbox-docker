@@ -119,6 +119,13 @@ Configuration and installation options are made available as variables. Some of 
 | `netbox_extra_services`           | `{}`                      | Additional services to include in the docker-compose file |
 | `netbox_extra_volumes`            | `{}`                      | Additional top-level volumes to include in the docker-compose file |
 | `netbox_extra_networks`           | `{}`                      | Additional top-level networks to include in the docker-compose file |
+| `netbox_db_engine`                | -                         | Override Django's database backend, e.g. `django.contrib.gis.db.backends.postgis` for PostGIS-dependent plugins (pair with a `postgis/postgis` `netbox_postgres_image`) |
+| `netbox_apt_packages`             | `[]`                      | Debian packages to apt-install in the netbox image (e.g. `gdal-bin`, `libgeos-dev` for GIS plugins). Forces a Dockerfile build |
+| `netbox_healthcheck_start_period` | `90s`                     | Netbox container healthcheck grace period. Startup applies pending migrations first, so raise it for upgrades or many plugins |
+| `netbox_healthcheck_interval`     | `15s`                     | Netbox container healthcheck interval               |
+| `netbox_healthcheck_timeout`      | `3s`                      | Netbox container healthcheck timeout                |
+| `netbox_compose_async_timeout`    | `1800`                    | Seconds Ansible waits for `docker compose up` (image build, pulls and migrations included) |
+| `netbox_compose_poll_interval`    | `10`                      | Seconds between Ansible polls of `docker compose up` |
 
 Some additional variables are available for advanced configuration. Please refer to the [defaults/main.yml](defaults/main.yml) file for a complete list.
 
